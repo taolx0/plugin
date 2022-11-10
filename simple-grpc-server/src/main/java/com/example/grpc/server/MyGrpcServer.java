@@ -16,41 +16,84 @@
 
 package com.example.grpc.server;
 
-import com.example.grpc.GreetingServiceGrpc;
-import com.example.grpc.HelloRequest;
-import com.example.grpc.HelloResponse;
-import com.example.grpc.HelloResponseOrBuilder;
+import com.example.grpc.*;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
 
 import java.io.IOException;
 
-/**
- * Created by rayt on 5/16/16.
- */
 public class MyGrpcServer {
-  static public void main(String [] args) throws IOException, InterruptedException {
-    Server server = ServerBuilder.forPort(8080)
-        .addService(new GreetingServiceImpl()).build();
-
-    System.out.println("Starting server...");
-    server.start();
-    System.out.println("Server started!");
-    server.awaitTermination();
-  }
-
-  public static class GreetingServiceImpl extends GreetingServiceGrpc.GreetingServiceImplBase {
-    @Override
-    public void greeting(HelloRequest request, StreamObserver<HelloResponse> responseObserver) {
-      System.out.println(request);
-
-      String greeting = "Hello there, " + request.getName();
-
-      HelloResponse response = HelloResponse.newBuilder().setGreeting(greeting).build();
-
-      responseObserver.onNext(response);
-      responseObserver.onCompleted();
+    static public void main(String[] args) throws IOException, InterruptedException {
+        Server server = ServerBuilder.forPort(8090).addService(new GreetingServiceImpl()).addService(new DriverImpl()).build();
+        server.start();
+        System.out.println("1|1|tcp|127.0.0.1:8090|grpc");
+        server.awaitTermination();
     }
-  }
+
+    public static class GreetingServiceImpl extends GreetingServiceGrpc.GreetingServiceImplBase {
+        @Override
+        public void greeting(HelloRequest request, StreamObserver<HelloResponse> responseObserver) {
+            System.out.println(request);
+
+            String greeting = "Hello " + request.getName();
+
+            HelloResponse response = HelloResponse.newBuilder().setGreeting(greeting).build();
+
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        }
+    }
+
+    public static class DriverImpl extends DriverGrpc.DriverImplBase {
+        @Override
+        public void metas(Empty request, StreamObserver<MetasResponse> responseObserver) {
+            super.metas(request, responseObserver);
+        }
+
+        @Override
+        public void init(InitRequest request, StreamObserver<Empty> responseObserver) {
+            super.init(request, responseObserver);
+        }
+
+        @Override
+        public void close(Empty request, StreamObserver<Empty> responseObserver) {
+            super.close(request, responseObserver);
+        }
+
+        @Override
+        public void ping(Empty request, StreamObserver<Empty> responseObserver) {
+            super.ping(request, responseObserver);
+        }
+
+        @Override
+        public void exec(ExecRequest request, StreamObserver<ExecResponse> responseObserver) {
+            super.exec(request, responseObserver);
+        }
+
+        @Override
+        public void tx(TxRequest request, StreamObserver<TxResponse> responseObserver) {
+            super.tx(request, responseObserver);
+        }
+
+        @Override
+        public void databases(Empty request, StreamObserver<DatabasesResponse> responseObserver) {
+            super.databases(request, responseObserver);
+        }
+
+        @Override
+        public void parse(ParseRequest request, StreamObserver<ParseResponse> responseObserver) {
+            super.parse(request, responseObserver);
+        }
+
+        @Override
+        public void audit(AuditRequest request, StreamObserver<AuditResponse> responseObserver) {
+            super.audit(request, responseObserver);
+        }
+
+        @Override
+        public void genRollbackSQL(GenRollbackSQLRequest request, StreamObserver<GenRollbackSQLResponse> responseObserver) {
+            super.genRollbackSQL(request, responseObserver);
+        }
+    }
 }
